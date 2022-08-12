@@ -9,5 +9,8 @@
         <module name="Hazel-Nguyen-P1" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Hazel-Nguyen-P1" target="8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
