@@ -102,7 +102,7 @@ public class UserDAO implements DatasourceCRUD<User>{
     @Override
     public void update(User user) {
         try{
-            String sql = "UPDATE users SET first_name = ?, last_name = ?, user_name = ?, email = ?, password = ?, WHERE user_id = ?";
+            String sql = "UPDATE users SET first_name = ?, last_name = ?, user_name = ?, email = ?, password = ? WHERE user_id = ?";
             PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, user.getFirstName());
             pstmt.setString(2, user.getLastName());

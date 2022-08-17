@@ -77,13 +77,35 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO: finish with update
+        System.out.println("Updating User..");
+
+        StringBuilder builder = new StringBuilder();
+        BufferedReader buffer = req.getReader();
+        while(buffer.ready()) {
+            builder.append(buffer.readLine());
+        }
+        String json = builder.toString();
+
+        User updateUser = mapper.readValue(json, User.class);
+        service.updateUser(updateUser);
+
+        resp.setStatus(200);
+        resp.getWriter().print("Sucessfully Updated User!");
+        System.out.println("Successfully Updated! Go Check DB");
 
     }
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // TODO: finish with delete
+        System.out.println("Deleting User...");
+        Integer userId = Integer.parseInt(req.getParameter("user-id"));
+        service.deleteUser(userId);
+
+        resp.setStatus(200);
+        resp.setContentType("Application/Json; Charset=UTF-8");
+        resp.getWriter().print("Sucessfully Deleted User!");
+        System.out.println("Successfully Deleted! Go Check DB");
 
     }
 

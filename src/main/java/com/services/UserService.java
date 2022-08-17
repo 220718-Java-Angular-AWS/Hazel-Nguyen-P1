@@ -27,9 +27,7 @@ public class UserService {
         return dao.readAll();
     }
 
-    public void updateUser(User user) {
-        dao.update(user);
-    }
+    public void updateUser(User user) { dao.update(user); }
 
     public void deleteUser(int id) {
         dao.delete(id);

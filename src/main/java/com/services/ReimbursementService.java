@@ -41,7 +41,7 @@ public class ReimbursementService {
         dao.update(reimbursement);
     }
 
-    public void deleteTask(int id) {
+    public void deleteReimbursement(int id) {
         dao.delete(id);
     }
 }

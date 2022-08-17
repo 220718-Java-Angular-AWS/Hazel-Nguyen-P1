@@ -25,7 +25,7 @@ public class Reimbursement {
         this.userID = userID;
     }
 
-    // TODO: Write another constructor to take in parameters without reimbursementid
+    // Write another constructor to take in parameters without reimbursementid
     public Reimbursement(String reimbursementType, String dateOfRequest, double amount, String comment, String statusOfRequest, Integer userID) {
         this.reimbursementType = reimbursementType;
         this.dateOfRequest = dateOfRequest;

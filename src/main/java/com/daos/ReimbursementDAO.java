@@ -113,7 +113,7 @@ public class ReimbursementDAO implements DatasourceCRUD<Reimbursement> {
 
         // TODO: ask kyle if there's a way to break sql statement to make it more readable
         try {
-            String sql = "UPDATE reimbursements SET reimbursement_type = ?, date_of_request = ?, amount = ?, comment = ?, status_of_request = ?, user_id = ?, WHERE reimbursement_id = ?";
+            String sql = "UPDATE reimbursements SET reimbursement_type = ?, date_of_request = ?, amount = ?, comment = ?, status_of_request = ?, user_id = ? WHERE reimbursement_id = ?";
             PreparedStatement pstmt = connection.prepareStatement(sql);
 
             pstmt.setString(1, reimbursement.getReimbursementType());
@@ -132,6 +132,7 @@ public class ReimbursementDAO implements DatasourceCRUD<Reimbursement> {
     }
 
     @Override
+    // delete by reimbursement_id
     public void delete(int id) {
         try {
             String sql = "DELETE FROM reimbursements WHERE reimbursement_id = ?";
