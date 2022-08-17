@@ -25,17 +25,17 @@ public class ReimbursementService {
         return dao.readAll();
     }
 
-//    public List<Task> getTasksForUser(Integer userId) {
-//        List<Task> taskList = dao.readAll();
-//
-//        for(Task task : taskList) {
-//            if(!task.getUserId().equals(userId)) {
-//                taskList.remove(task);
-//            }
-//        }
-//
-//        return taskList;
-//    }
+    public List<Reimbursement> getReimbursementsForUser(Integer userId) {
+        List<Reimbursement> taskList = dao.readAll();
+
+        for(Reimbursement task : taskList) {
+            if(!task.getUserID().equals(userId)) {
+                taskList.remove(task);
+            }
+        }
+
+        return taskList;
+    }
 
     public void updateReimbursement(Reimbursement reimbursement) {
         dao.update(reimbursement);

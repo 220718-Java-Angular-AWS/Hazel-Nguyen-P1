@@ -1,128 +1,102 @@
-package com.revature.daos;
+package com.revature.servlets;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.revature.pojos.Task;
 import com.revature.pojos.User;
-import com.revature.services.DatasourceService;
+import com.revature.services.TaskService;
 
-import java.sql.*;
-import java.util.LinkedList;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.Enumeration;
 import java.util.List;
 
-public class TaskDAO implements DatasourceCRUD<Task>{
-    Connection connection;
+public class TaskServlet extends HttpServlet {
+    private TaskService service;
+    private ObjectMapper mapper;
 
-    public TaskDAO() {
-        // TODO: finish this after connection manager
-        connection = DatasourceService.getConnection();
+    @Override
+    public void init() throws ServletException {
+        System.out.println("Task servlet initializing...");
+        this.service = new TaskService();
+        this.mapper = new ObjectMapper();
+        System.out.println("Task servlet initialized!");
     }
 
     @Override
-    public void create(Task task) {
-        try {
-            // create the statement
-            // paratmeterize the statement
-            // execute the statement
-            // marshall the result set (READ ONLY)
-
-            // PreparedStatment is an interface
-            String sql = "INSERT INTO tasks (title, message, user_id, completed) VALUES (?, ?, ?, false)";
-            PreparedStatement pstmt = connection.prepareStatement(sql);
-
-            pstmt.setString(1, task.getTitle());
-            pstmt.setString(2, task.getMessage());
-            pstmt.setInt(3, task.getUserId());
-
-            pstmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void destroy() {
     }
 
     @Override
-    public Task read(int id) {
-        Task task = new Task();
-        try {
-            String sql = "SELECT * FROM tasks WHERE task_id = ?";
-            PreparedStatement pstmt = connection.prepareStatement(sql);
-            pstmt.setInt(1, id);
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Integer userId = Integer.parseInt(req.getParameter("user-id"));
 
-            ResultSet results = pstmt.executeQuery();
+        List<Task> taskList = service.getTasksForUser(userId);
 
-            // marshall the result set into an object Task
-            // in the parameter, use the name convention in sql
-            if(results.next()) {
-                task.setTaskId(results.getInt("task_id"));
-                task.setTitle(results.getString("title"));
-                task.setMessage(results.getString("message"));
-                task.setUserId(results.getInt("user_id"));
-                task.setCompleted(results.getBoolean("completed"));
-            }
+        String json = mapper.writeValueAsString(taskList);
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return task;
+        resp.getWriter().print(json);
+        resp.setStatus(200);
+        resp.setContentType("Application/Json; Charset=UTF-8");
+        //throw new ArithmeticException();
     }
 
     @Override
-    public List<Task> readAll() {
-        List<Task> taskList = new LinkedList<>();
-        try {
-            String sql = "SELECT * FROM tasks";
-            PreparedStatement pstmt = connection.prepareStatement(sql);
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        StringBuilder builder = new StringBuilder();
+        BufferedReader buffer = req.getReader();
 
-            ResultSet results = pstmt.executeQuery();
-
-            while(results.next()) {
-                Task task = new Task();
-                task.setTaskId(results.getInt("task_id"));
-                task.setTitle(results.getString("title"));
-                task.setMessage(results.getString("message"));
-                task.setUserId(results.getInt("user_id"));
-                task.setCompleted(results.getBoolean("completed"));
-                taskList.add(task);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+        while(buffer.ready()) {
+            builder.append(buffer.readLine());
         }
 
-        return taskList;
+        String json = builder.toString();
+        Task task = mapper.readValue(json, Task.class);
+
+        service.saveTask(task);
+
+        resp.setStatus(200);
+        resp.getWriter().print("Sucessfully Posted New Task!");
+        System.out.println("Successfully Posted! Go Check DB");
+
     }
 
     @Override
-    public void update(Task task) {
-        try {
-            String sql = "UPDATE tasks SET title = ?, message = ?, user_id = ?, completed = ? WHERE task_id = ?";
-            PreparedStatement pstmt = connection.prepareStatement(sql);
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-            pstmt.setString(1, task.getTitle());
-            pstmt.setString(2, task.getMessage());
-            pstmt.setInt(3, task.getUserId());
-            pstmt.setBoolean(4, task.getCompleted());
-            pstmt.setInt(5, task.getTaskId());
-
-            pstmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
-    public void delete(int id) {
-        try {
-            String sql = "DELETE FROM tasks WHERE task_id = ?";
-            PreparedStatement pstmt = connection.prepareStatement(sql);
-
-            pstmt.setInt(1, id);
-
-            pstmt.executeUpdate();
-
-        } catch(SQLException e) {
-            e.printStackTrace();
-        }
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
     }
 }
+
+From LUKE
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        !!String param = req.getParameter("requestsID");
+        if(param == null) {
+            //Return all
+            List<Requests> userList = service.getAllRequests();
+            String json = mapper.writeValueAsString(userList);
+            resp.getWriter().println(json);
+            sout("there are no requests");
+        } else {
+            //return the one the request wants
+            Integer userId = Integer.parseInt(req.getParameter("requestsID));
+R           Requests requests = service.getRequests(requistID);
+            String json = mapper.writeValueAsString(user);
+            resp.getWriter().println(json);
+        }
+
+        resp.setContentType("Application/Json; Charset=UTF-8");
+        resp.setStatus(200);
+
+        //super.doGet(req, resp);
+    }
+
