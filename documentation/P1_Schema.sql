@@ -8,6 +8,7 @@ CREATE TABLE users (
 	user_name VARCHAR(200) NOT NULL UNIQUE,
 	email VARCHAR(200) NOT NULL,
 	"password" VARCHAR(200) NOT NULL,
+	"admin" BOOL,
 	CONSTRAINT users_pk PRIMARY KEY (user_id) /*We could also simply put "PRIMARY KEY" on the user_id definition*/
 );
 

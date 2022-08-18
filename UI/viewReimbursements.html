@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- This is boilerplate HTML header stuff -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Reimubursements</title>
+    <style>
+        .reimbursement {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+
+        .reimbursementHeading {
+            font-weight: bold;
+        }
+
+        .reimbursementLine {
+            font-style: normal;
+        }
+
+        #reimbursementList {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>View Reimbursements </h2>
+    Employee User ID#: <input type="number" id="userId"><br>
+    <button type="button" onclick="viewReimbursementsbyUserId()">View Reimbursements</button>
+    <button type="button" onclick="goToEmployeeMenu()">Back to Menu</button><br>
+    <div id="reimbursementList"></div>
+
+</body>
+
+<!-- And now the script portion where we can write our javascript code (BROWSER POV TO READ THIS SCRIPT)--> 
+<script>
+    // Make an API call for tasks
+    // parse the JSON file in that response
+    // insert into the web page the data 
+
+    async function viewReimbursementsbyUserId() {
+        
+        // url is a server location 
+        // Get functions do not have a body
+        let userId = document.getElementById("userId").value;
+        let url = 'http://localhost:8080/Hazel-Nguyen-P1/reimbursements?user-id=' + userId;
+        let response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            }
+        });
+
+        //parse the JSON in that response (wait for the response to be done before continueing)
+        let array = await response.json();
+
+        // check content of response
+        //console.log(array);
+    
+        //get the element where we will place our content
+        let htmlElement = document.getElementById('reimbursementList');
+        
+
+        //This is just looping through an array, exactly the same as Java
+        for (let i = 0; i < array.length; i++) {
+            let reimbursement = array[i];
+
+            // use console log to spit the object out
+            //console.log(array[i]);
+
+            //insert into the web page the data
+            // changing the dom to get rerender
+            htmlElement.innerHTML += '<div id="reimbursement' + i + '">';
+            let taskElement = document.getElementById('reimbursement' + i);
+            taskElement.innerHTML += '<div class="reimbursementHeading"> Request ID#: ' + reimbursement.reimbursementID + '</div>';
+            taskElement.innerHTML += '<div class="reimbursementLine"> Type: ' + reimbursement.reimbursementType + '</div>';
+            taskElement.innerHTML += '<div class="reimbursementLine"> Date: ' + reimbursement.dateOfRequest + '</div>';
+            taskElement.innerHTML += '<div class="reimbursementLine"> Amount: ' + reimbursement.amount + '</div>';
+            taskElement.innerHTML += '<div class="reimbursementLine"> Comment: ' + reimbursement.comment + '</div>';
+            taskElement.innerHTML += '<div class="reimbursementLine"> Status: ' + reimbursement.statusOfRequest + '</div>';
+            taskElement.innerHTML += '<div class="reimbursementLine"> UserID: ' + reimbursement.userID + '</div><br><br>';
+            htmlElement.innerHTML += '</div>';
+        }
+
+
+    }; // call the function with parameter here (1) or user_id
+
+    async function goToEmployeeMenu() {
+        location.href = "file:///Users/titillaty/Revature/Hazel-Nguyen-P1/UI/EmployeeMenu.html"
+    }
+
+
+</script>
+
+</html>

@@ -9,26 +9,46 @@ public class User {
     private String userName;
     private String email;
     private String password;
+    private boolean admin;
 
     public User() {
     }
 
-    public User(Integer userId, String firstName, String lastName, String userName, String email, String password) {
+    public User(Integer userId, String firstName, String lastName, String userName, String email, String password, boolean admin) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.userName = userName;
         this.email = email;
         this.password = password;
+        this.admin = admin;
     }
 
-    // TODO: Write another constructor to take in parameters without id
+    // TODO: Write another constructor to take in parameters without id but admin
+    public User(String firstName, String lastName, String userName, String email, String password, boolean admin) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.userName = userName;
+        this.email = email;
+        this.password = password;
+        this.admin = admin;
+    }
+
+    // TODO: Write another constructor to take in parameters without id & admin
     public User(String firstName, String lastName, String userName, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.userName = userName;
         this.email = email;
         this.password = password;
+    }
+
+
+    // Added to authenticate
+    public User(String username, String email, String password) {
+        this.userName = username; //credentials
+        this.email = email; // credentials
+        this.password = password; // password
     }
 
     public Integer getUserId() {
@@ -79,12 +99,17 @@ public class User {
         this.password = password;
     }
 
+    public boolean isAdmin() { return admin; }
+
+    public void setAdmin(boolean admin) { this.admin = admin; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(userId, user.userId) &&
+        return admin == user.admin &&
+                Objects.equals(userId, user.userId) &&
                 Objects.equals(firstName, user.firstName) &&
                 Objects.equals(lastName, user.lastName) &&
                 Objects.equals(userName, user.userName) &&
@@ -94,7 +119,7 @@ public class User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, firstName, lastName, userName, email, password);
+        return Objects.hash(userId, firstName, lastName, userName, email, password, admin);
     }
 
     @Override
@@ -106,6 +131,7 @@ public class User {
                 ", userName='" + userName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", admin=" + admin +
                 '}';
     }
 }

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- This is all boilerplate HTML stuff in the head section. <head> is a section for metadata about the web page -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete User</title>
+</head>
+
+<!-- This is the body, where we have the content the user will see -->
+
+<body>
+    <h2>Delete Account </h2>
+    Employee User ID#: <input type="number" id="userId"><br>
+    <button type="button" onclick="deleteUser()">Delete User</button>
+    <button type="button" onclick="goToEmployeeMenu()">Back to Menu</button><br>
+</body>
+
+
+<script>
+
+    async function deleteUser() {
+            let userId = document.getElementById("userId").value;
+            let url = 'http://localhost:8080/Hazel-Nguyen-P1/users?user-id=' + userId;
+            let response = await fetch(url, {
+                method: 'DELETE',
+                headers:{
+                    'Content-Type': 'application/json; charset=utf-8'
+                }
+            });
+
+            if (response.status == 200) {
+                alert("Account Deleted!");
+            }
+    };
+
+    async function goToEmployeeMenu() {
+        location.href = "file:///Users/titillaty/Revature/Hazel-Nguyen-P1/UI/EmployeeMenu.html"
+    }
+    
+
+</script>
+
+
+</html>

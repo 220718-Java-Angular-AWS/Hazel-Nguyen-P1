@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- This is all boilerplate HTML stuff in the head section. <head> is a section for metadata about the web page -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reimbursement Request Form</title>
+</head>
+
+<!-- This is the body, where we have the content the user will see -->
+
+<body>
+    <h2>Reimbursement Request Form</h2>
+    User ID: <input type="text" id="userId"><br>
+    Reimbursement Type (Lodging, Food, Travel): <input type="text" id="type"><br>
+    Date of Request (MM-DD-YYYY): <input type="text" id="dateOfRequest"><br>
+    Amount: <input type="number" id="amount"><br>
+    Reason: <input type="text" id="comment"><br>
+    <!-- First Name: <input type="text" id="firstName"><br> -->
+    <button type="button" onclick="submitRequestForm()">Submit</button>
+    <button type="button" onclick="goToEmployeeMenu()">Back to Menu</button>
+</body>
+
+
+<script>
+    
+    async function submitRequestForm() {
+
+        //Here we are building our user object that we will send as the request body. 
+        
+        let reimbursement = {
+            reimbursementType: document.getElementById("type").value,
+            dateOfRequest: document.getElementById("dateOfRequest").value,
+            amount: document.getElementById("amount").value,
+            comment: document.getElementById("comment").value,
+            userID: document.getElementById("userId").value
+        }
+
+        //We want to send our HTTP request to the proper server and endpoint. 
+        //In thic case we are going to send a POST to the /users endpoint
+        let url = 'http://localhost:8080/Hazel-Nguyen-P1/reimbursements';
+        
+        // POST functions require a body
+        let response = await fetch(url, {
+            //this code block is all the second parameter for fetch()
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            //and now we stringify our user object into a json string which makes up the body of our request.
+            body: JSON.stringify(reimbursement)
+        });
+
+
+        //This code doesn't execute until the response above is ready. If we get a 200, we know it worked. Otherwise there was a problem
+        if (response.status == 200) {
+            alert("Success!");
+        } else {
+            alert("Something went wrong...");
+        }
+
+    }
+
+    async function goToEmployeeMenu() {
+        location.href = "file:///Users/titillaty/Revature/Hazel-Nguyen-P1/UI/EmployeeMenu.html"
+    }
+</script>
+
+</html>

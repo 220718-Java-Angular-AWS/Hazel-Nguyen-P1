@@ -28,12 +28,13 @@ public class ReimbursementService {
     public List<Reimbursement> getReimbursementsForUser(Integer userId) {
         List<Reimbursement> taskList = dao.readAll();
 
+        // filter out of tasklist
         for(Reimbursement task : taskList) {
             if(!task.getUserID().equals(userId)) {
                 taskList.remove(task);
             }
         }
-
+        // return a list of task that matches our users
         return taskList;
     }
 

@@ -38,9 +38,16 @@ public class ReimbursementDAO implements DatasourceCRUD<Reimbursement> {
             pstmt.setString(2, reimbursement.getDateOfRequest());
             pstmt.setDouble(3, reimbursement.getAmount());
             pstmt.setString(4, reimbursement.getComment());
-            pstmt.setString(5, reimbursement.getStatusOfRequest());
+            //pstmt.setString(5, reimbursement.getStatusOfRequest());
             pstmt.setInt(6, reimbursement.getUserID());
 
+            // Set Default Status to Pending
+            if(reimbursement.getStatusOfRequest() == null) {
+                String defaultStatus = "Pending";
+                pstmt.setString(5, defaultStatus);
+            } else {
+                pstmt.setString(5, reimbursement.getStatusOfRequest());
+            }
             pstmt.executeUpdate();
 
         } catch (SQLException e) {

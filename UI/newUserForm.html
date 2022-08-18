@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- This is all boilerplate HTML stuff in the head section. <head> is a section for metadata about the web page -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New User Form</title>
+</head>
+
+<!-- This is the body, where we have the content the user will see -->
+
+<body>
+    <h2>Create New Account</h2>
+    First Name: <input type="text" id="firstName"><br>
+    Last Name: <input type="text" id="lastName"><br>
+    Username: <input type="text" id="userName"><br>
+    Email: <input type="text" id="email"><br>
+    <!-- First Name: <input type="text" id="firstName"><br> -->
+    Password: <input type="password" id="password"><br>
+    <button type="button" onclick="getTasksForUser()">Add New User</button>
+    <button type="button" onclick="returnToMain()">Return To Login</button>
+</body>
+
+
+<script>
+    // The function is asynchronous. This just means we can use the "await" keyword to make the code execute asynchronously.
+    async function getTasksForUser() {
+
+        //Here we are building our user object that we will send as the request body. 
+        //This method we are using is called "DOM Manipulation" where we access and potentially change the HTML elements in the DOM.
+        let user = {
+            firstName: document.getElementById("firstName").value,
+            lastName: document.getElementById("lastName").value,
+            userName: document.getElementById("userName").value,
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value
+        }
+
+
+
+        //We want to send our HTTP request to the proper server and endpoint. 
+        //In thic case we are going to send a POST to the /users endpoint
+        let url = 'http://localhost:8080/Hazel-Nguyen-P1/users';
+        
+        // POST functions require a body
+        let response = await fetch(url, {
+            //this code block is all the second parameter for fetch()
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            //and now we stringify our user object into a json string which makes up the body of our request.
+            body: JSON.stringify(user)
+        });
+
+
+        //This code doesn't execute until the response above is ready. If we get a 200, we know it worked. Otherwise there was a problem
+        if (response.status == 200) {
+            alert("Success!");
+        } else {
+            alert("Something went wrong...");
+        }
+
+    }
+
+    async function returnToMain() {
+        location.href = "file:///Users/titillaty/Revature/Hazel-Nguyen-P1/UI/MainIndex.html"
+    }
+
+</script>
+
+</html>

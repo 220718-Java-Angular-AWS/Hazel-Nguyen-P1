@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- This is all boilerplate HTML stuff in the head section. <head> is a section for metadata about the web page -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Reimbursement</title>
+    <style>
+        .reimbursement {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+        .reimbursementHeading {
+            font-weight: bold;
+        }
+
+        .reimbursementLine {
+            font-style: normal;
+        }
+
+        #reimbursementList {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+    </style>
+</head>
+
+<!-- This is the body, where we have the content the user will see -->
+
+<body>
+    <h2>Edit Reimbursement</h2>
+    Enter Employee ID#: <input type="number" id="userId"><br>
+    <button type="button" onclick="viewReimbursements()">View Request</button><br>
+
+    <div id="reimbursementList"></div>
+    Enter Request ID# to Update: <input type="number" id="reimbursementId"><br>
+    Reimbursement Type (Lodging, Food, Travel): <input type="text" id="type"><br>
+    Date of Request (MM-DD-YYYY): <input type="text" id="dateOfRequest"><br>
+    Amount: <input type="number" id="amount"><br>
+    Reason: <input type="text" id="comment"><br>
+    <!-- First Name: <input type="text" id="firstName"><br> -->
+    <button type="button" onclick="submitRequestForm()">Submit</button>
+    <button type="button" onclick="goToEmployeeMenu()">Back to Menu</button><br>
+</body>
+
+
+<script>
+        async function viewReimbursements() {
+        
+        // Get functions do not have a body
+        let userId = document.getElementById("userId").value;
+        let url = 'http://localhost:8080/Hazel-Nguyen-P1/reimbursements?user-id=' + userId;
+        let response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            }
+        });
+
+        let array = await response.json();
+        let htmlElement = document.getElementById('reimbursementList');
+        
+
+        for (let i = 0; i < array.length; i++) {
+            let reimbursement = array[i];
+
+            htmlElement.innerHTML += '<div id="reimbursement' + i + '">';
+            let taskElement = document.getElementById('reimbursement' + i);
+            taskElement.innerHTML += '<div class="reimbursementHeading"> Request ID#: ' + reimbursement.reimbursementID + '</div>';
+            taskElement.innerHTML += '<div class="reimbursementLine"> Type: ' + reimbursement.reimbursementType + '</div>';
+            taskElement.innerHTML += '<div class="reimbursementLine"> Date: ' + reimbursement.dateOfRequest + '</div>';
+            taskElement.innerHTML += '<div class="reimbursementLine"> Amount: ' + reimbursement.amount + '</div>';
+            taskElement.innerHTML += '<div class="reimbursementLine"> Comment: ' + reimbursement.comment + '</div>';
+            taskElement.innerHTML += '<div class="reimbursementLine"> Status: ' + reimbursement.statusOfRequest + '</div>';
+            taskElement.innerHTML += '<div class="reimbursementLine"> UserID: ' + reimbursement.userID + '</div><br><br>';
+            htmlElement.innerHTML += '</div>';
+        }
+
+
+    }; // call the function with parameter here (1) or user_id
+
+        async function submitRequestForm() {
+
+            //Here we are building our user object that we will send as the request body. 
+            let status = "Pending";
+
+            let reimbursement = {
+                reimbursementID: document.getElementById("reimbursementId").value,
+                reimbursementType: document.getElementById("type").value,
+                dateOfRequest: document.getElementById("dateOfRequest").value,
+                amount: document.getElementById("amount").value,
+                comment: document.getElementById("comment").value,
+                statusOfRequest: status,
+                userID: document.getElementById("userId").value
+            }
+
+
+            let url = 'http://localhost:8080/Hazel-Nguyen-P1/reimbursements';
+            
+            // PUT functions require a body
+            let response = await fetch(url, {
+                //this code block is all the second parameter for fetch()
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                //and now we stringify our user object into a json string which makes up the body of our request.
+                body: JSON.stringify(reimbursement)
+            });
+
+
+            //This code doesn't execute until the response above is ready. If we get a 200, we know it worked. Otherwise there was a problem
+            if (response.status == 200) {
+                alert("Success!");
+            } else {
+                alert("Something went wrong...");
+            }
+
+    }
+
+    async function goToEmployeeMenu() {
+        location.href = "file:///Users/titillaty/Revature/Hazel-Nguyen-P1/UI/EmployeeMenu.html"
+    }
+
+</script>
+
+</html>

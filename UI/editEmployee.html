@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- This is all boilerplate HTML stuff in the head section. <head> is a section for metadata about the web page -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Account</title>
+    <style>
+        .reimbursement {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+        .Heading {
+            font-weight: bold;
+        }
+
+        .Line {
+            font-style: normal;
+        }
+
+        #employeeList {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+    </style>
+</head>
+
+<!-- This is the body, where we have the content the user will see -->
+
+<body>
+    <h2>Edit Account</h2>
+    Enter Employee ID#: <input type="number" id="userId"><br>
+    <!-- <button type="button" onclick="viewAccount()">View Current Information</button><br> -->
+
+    <div id="employeeList"></div>
+
+    <h3>Update Information</h3>
+    First Name: <input type="text" id="firstName"><br>
+    Last Name: <input type="text" id="lastName"><br>
+    Username: <input type="text" id="userName"><br>
+    Email: <input type="text" id="email"><br>
+    Password: <input type="password" id="password"><br>
+
+    <button type="button" onclick="updateUser()">Submit</button>
+    <button type="button" onclick="goToEmployeeMenu()">Back to Menu</button><br>
+</body>
+
+
+<script>
+    async function viewAccount() {
+
+        // GET does not have a body
+        let userId = document.getElementById("userId").value;
+        let url = 'http://localhost:8080/Hazel-Nguyen-P1/users?user-id=' + userId;
+        let response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            }
+        });
+
+        let array = await response.json();
+        let htmlElement = document.getElementById('employeeList');
+        
+
+        for (let i = 0; i < array.length; i++) {
+            let employee = array[i];
+
+            htmlElement.innerHTML += '<div id="employee' + i + '">';
+            let taskElement = document.getElementById('employee' + i);
+            taskElement.innerHTML += '<div class="Heading"> User ID#: ' + employee.userId + '</div>';
+            taskElement.innerHTML += '<div class="Line"> First Name: ' + employee.firstName + '</div>';
+            taskElement.innerHTML += '<div class="Line"> Last Name: ' + employee.lastName + '</div>';
+            taskElement.innerHTML += '<div class="Line"> Username: ' + employee.userName + '</div>';
+            taskElement.innerHTML += '<div class="Line"> Email: ' + employee.email + '</div>';
+            taskElement.innerHTML += '<div class="Line"> admin?: ' + employee.admin + '</div><br><br>';
+            htmlElement.innerHTML += '</div>';
+        }
+
+    };
+    
+    async function updateUser() {
+
+        //Here we are building our user object that we will send as the request body. 
+        
+        let user = {
+            userId: document.getElementById("userId").value,
+            firstName: document.getElementById("firstName").value,
+            lastName: document.getElementById("lastName").value,
+            userName: document.getElementById("userName").value,
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value
+        }
+
+
+
+        //We want to send our HTTP request to the proper server and endpoint. 
+        //In thic case we are going to send a POST to the /users endpoint
+        let url = 'http://localhost:8080/Hazel-Nguyen-P1/users';
+        
+        // PUT functions require a body
+        let response = await fetch(url, {
+            //this code block is all the second parameter for fetch()
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            //and now we stringify our user object into a json string which makes up the body of our request.
+            body: JSON.stringify(user)
+        });
+
+
+        //This code doesn't execute until the response above is ready. If we get a 200, we know it worked. Otherwise there was a problem
+        if (response.status == 200) {
+            alert("Success!");
+        } else {
+            alert("Something went wrong...");
+        }
+
+    }
+
+    async function goToEmployeeMenu() {
+        location.href = "file:///Users/titillaty/Revature/Hazel-Nguyen-P1/UI/EmployeeMenu.html"
+    }
+
+</script>
+
+</html>

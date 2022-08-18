@@ -34,7 +34,7 @@ public class UserService {
     }
 
     // add in authentification for web-tokens
-//    public User authenticate(String username, String password) {
-//        return dao.authenticate(username, password);
-//    }
+    public User authenticate(String username, String password) {
+        return dao.authenticate(username, password);
+    }
 }

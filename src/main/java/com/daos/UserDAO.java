@@ -1,5 +1,6 @@
 package com.daos;
 
+import com.exceptions.AccessDeniedException;
 import com.pojos.User;
 import com.services.DatasourceService;
 
@@ -23,7 +24,7 @@ public class UserDAO implements DatasourceCRUD<User>{
     @Override
     public void create(User user) {
         try {
-            String sql = "INSERT INTO users (first_name, last_name, user_name, email, password) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO users (first_name, last_name, user_name, email, password, admin) VALUES (?, ?, ?, ?, ?, false)";
             PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, user.getFirstName());
             pstmt.setString(2, user.getLastName());
@@ -34,12 +35,21 @@ public class UserDAO implements DatasourceCRUD<User>{
             // execute one row of sql
             pstmt.executeUpdate();
 
-            // TODO: ask kyle what this means
+            // Iterate through generatedkeys to asign the new user id to userID
+            // next does the boolean check to see if theres a next value and moves cursor to retrieve that next value
             ResultSet keys = pstmt.getGeneratedKeys();
             if(keys.next()) {
-                Integer key = keys.getInt("user_id");
+                Integer key = keys.getInt("user_id"); // could set it equal to an integer 1
                 user.setUserId(key);
+
+                if(key == 1) {
+                    String admin = "UPDATE users SET admin = true WHERE user_id = 1";
+                    PreparedStatement pstmtAdmin = connection.prepareStatement(admin);
+                    pstmtAdmin.executeUpdate();
+                }
             }
+
+
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -63,6 +73,7 @@ public class UserDAO implements DatasourceCRUD<User>{
                 user.setUserName(results.getString("user_name"));
                 user.setEmail(results.getString("email"));
                 user.setPassword(results.getString("password"));
+                user.setAdmin(results.getBoolean("admin"));
             }
 
         } catch (SQLException e) {
@@ -88,6 +99,7 @@ public class UserDAO implements DatasourceCRUD<User>{
                 user.setUserName(results.getString("user_name"));
                 user.setEmail(results.getString("email"));
                 user.setPassword(results.getString("password"));
+                user.setAdmin(results.getBoolean("admin"));
                 // add user to the userList
                 userList.add(user);
             }
@@ -110,6 +122,7 @@ public class UserDAO implements DatasourceCRUD<User>{
             pstmt.setString(4, user.getEmail());
             pstmt.setString(5, user.getPassword());
             pstmt.setInt(6, user.getUserId());
+
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -130,6 +143,40 @@ public class UserDAO implements DatasourceCRUD<User>{
             e.printStackTrace();
         }
 
+    }
+
+    // Authenticate Servlet, added method not needed for override in DatasourceCRUD
+    public User authenticate(String username, String password) {
+        User user = new User();
+
+        try {
+            String sql = "SELECT * FROM users WHERE user_name = ? AND password = ?";
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+
+            ResultSet results = pstmt.executeQuery();
+
+            if(results.next()) {
+                user.setUserId(results.getInt("user_id"));
+                user.setFirstName(results.getString("first_name"));
+                user.setLastName(results.getString("last_name"));
+                user.setUserName(results.getString("user_name"));
+                user.setEmail(results.getString("email"));
+                user.setPassword(results.getString("password"));
+                user.setAdmin(results.getBoolean("admin"));
+
+            } else {
+                throw new AccessDeniedException("Access denied!");
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        return user;
     }
 
 }

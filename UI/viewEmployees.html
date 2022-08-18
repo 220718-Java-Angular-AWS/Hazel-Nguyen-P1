@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- This is all boilerplate HTML stuff in the head section. <head> is a section for metadata about the web page -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View All Employees</title>
+    <style>
+        .Heading {
+            font-weight: bold;
+        }
+
+        .Line {
+            font-style: normal;
+        }
+
+        #employeeList {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+    </style>
+</head>
+
+
+<body>
+    <h2>View All Employees</h2>
+    <hi><b>Return all users in the system</b></hi><br><br>
+    <div id="employeeList"></div>
+    
+</body>
+
+<script>
+    
+    (async function getAllUsers() {
+        
+        // GET does not have a body
+        let url = 'http://localhost:8080/Hazel-Nguyen-P1/users';
+        let response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            }
+        });
+
+        //parse the JSON in that response (wait for the response to be done before continueing)
+        let array = await response.json();
+
+        // check content of response
+        //console.log(array);
+    
+        //get the element where we will place our content
+        let htmlElement = document.getElementById('employeeList');
+        
+
+        //This is just looping through an array, exactly the same as Java
+        for (let i = 0; i < array.length; i++) {
+            let employee = array[i];
+
+            // use console log to spit the object out
+            //console.log(array[i]);
+
+            //insert into the web page the data
+            // changing the dom to get rerender
+            htmlElement.innerHTML += '<div id="employee' + i + '">';
+            let taskElement = document.getElementById('employee' + i);
+            taskElement.innerHTML += '<div class="Heading"> User ID#: ' + employee.userId + '</div>';
+            taskElement.innerHTML += '<div class="Line"> First Name: ' + employee.firstName + '</div>';
+            taskElement.innerHTML += '<div class="Line"> Last Name: ' + employee.lastName + '</div>';
+            taskElement.innerHTML += '<div class="Line"> Username: ' + employee.userName + '</div>';
+            taskElement.innerHTML += '<div class="Line"> Email: ' + employee.email + '</div>';
+            taskElement.innerHTML += '<div class="Line"> admin?: ' + employee.admin + '</div><br><br>';
+            htmlElement.innerHTML += '</div>';
+        }
+
+    })(); 
+
+</script>
+
+</html>
